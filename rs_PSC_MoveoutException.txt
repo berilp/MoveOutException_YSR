@@ -12,8 +12,6 @@
 
 //select display 
 
-
-
 select 
 p.hmy phmy, p.scode Property_Code, p.saddr1 PropertyName,
 te.sfirstname + ' ' + te.slastname Tenant_Name, te.scode Tenant_Code, u.scode Unit_Code,
@@ -27,6 +25,7 @@ inner join property p on p.hmy = te.hproperty
 where 1=1 and
 DATEDIFF(day, te.dtmoveout, te.dtlastmodified) > 2
 and te.istatus = 1
+#conditions#
 
 
 
