@@ -7,7 +7,7 @@
 		Loads the Correspondence Custom Report Setup.
 		Report : ...Move-Out Exception Report (PSC_MoveOut) 
 	PACKAGE CREATED ON
-		Date & Time : 8/26/2025 7:19:40 PM
+		Date & Time : 8/26/2025 7:37:28 PM
 	VERSION
 		CorrespondencePIv07.13
 	REPORT NOTES
@@ -22,13 +22,14 @@ EXEC YSR_DeleteReportSetup 'PSC_MoveOut', 1
 
 /* Insert or Update YSR Report Setup */ 
 UPDATE CustomCorrespMerging 
-SET sCode='PSC_MoveOut',sName='...Move-Out Exception Report',sScriptFileName='',sSELECT='select 
+SET sCode='PSC_MoveOut',sName='...Move-Out Exception Report',sScriptFileName='',sSELECT='select distinct 
 p.hmy phmy, p.scode Property_Code, p.saddr1 PropertyName 
 from tenant te
 inner join unitxref ux on ux.htenant = te.hmyperson
 inner join unit u on u.hmy = te.hunit and ux.hunit = u.hmy 
 inner join property p on p.hmy = te.hproperty
-where 1=1',sKeyCols='Property_Code',bInactive=0,bNewScreenOutput =0,bTabbedOutput =0,bTitleUsingFreezePanes =0,iObjectType=0,
+where 1=1
+#conditions#',sKeyCols='Property_Code',bInactive=0,bNewScreenOutput =0,bTabbedOutput =0,bTitleUsingFreezePanes =0,iObjectType=0,
      sHRecord='',
      hAttachment=(SELECT hmy FROM AttachmentType WHERE UPPER(sDesc) =UPPER('') AND iObjectType =0),
      hEmailTemplate=(SELECT hmy FROM Email_Template WHERE UPPER(sName) =UPPER('') AND iType =0),
@@ -57,13 +58,14 @@ where 1=1',sKeyCols='Property_Code',bInactive=0,bNewScreenOutput =0,bTabbedOutpu
 WHERE UPPER(sCode)=UPPER('PSC_MoveOut')
 ;
 INSERT INTO CustomCorrespMerging(sCode,sName,sScriptFileName,sSELECT,sKeyCols,bInactive,bNewScreenOutput,bTabbedOutput,bTitleUsingFreezePanes,iObjectType,sHRecord,hAttachment,hEmailTemplate,hEmailToRole,sMergedFileEmailTo,sEmailType,sNotes,bIncludeAllContacts,bMergeReportsWithNoEmailId,bAttachReportChecked,bEmailReportChecked,bShowOnPortalChecked,sReportOutputPath,bSchedulerRpt,bLongRunRpt,iDgSignObjectType,sDgSignHRecord,bHideFromGenerateDropDown,sQRColumns,iReportType,iWizardStep,bWizardCompleted,bAlwaysPreview,sHelpTopic,sAttachDescCol)
-SELECT 'PSC_MoveOut','...Move-Out Exception Report','','select 
+SELECT 'PSC_MoveOut','...Move-Out Exception Report','','select distinct 
 p.hmy phmy, p.scode Property_Code, p.saddr1 PropertyName 
 from tenant te
 inner join unitxref ux on ux.htenant = te.hmyperson
 inner join unit u on u.hmy = te.hunit and ux.hunit = u.hmy 
 inner join property p on p.hmy = te.hproperty
-where 1=1','Property_Code',0,0,0,0,0,''
+where 1=1
+#conditions#','Property_Code',0,0,0,0,0,''
       ,(SELECT hmy FROM AttachmentType WHERE UPPER(sDesc) =UPPER('') AND iObjectType =0)
       ,(SELECT hmy FROM Email_Template WHERE UPPER(sName) =UPPER('') AND iType =0)
       ,(SELECT hmy FROM Role WHERE UPPER(sDesc) =UPPER('') AND iObjectType =0)
@@ -94,7 +96,7 @@ WHERE NOT EXISTS(SELECT 1 FROM CustomCorrespMerging WHERE UPPER(sCode)=UPPER('PS
 /* Insert or UPDATE Filters Setup for PSC_MoveOut */ 
 UPDATE CustomCorrespFilters 
 SET hCustomCorrespMerging =(SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut')),iMaxWidth=0,bInactive=0,bShowInTitle=0,sFieldName='phmy',
-   sLabel='Property',sSequence='01',sType='Lookup List',sMandatory='False',sListValues='',sIsQuery='False',sLookupName='ysiPropertyOrListLookup',sPopulatedInURL='',
+   sLabel='Property',sSequence='01',sType='Lookup List',sMandatory='False',sListValues='',sIsQuery='False',sLookupName='ysiPropertyOrListLookup',sPopulatedInURL='Allow Edit',
    sMultiple='True',sParent='',sCodeToID='',sRowNumber='01',sColumnView='1'
 WHERE hMy=(SELECT ISNULL(Max(crf1.hMy),0) 
              FROM CustomCorrespFilters crf1 
@@ -103,7 +105,7 @@ WHERE hMy=(SELECT ISNULL(Max(crf1.hMy),0)
              AND UPPER(crf1.sFieldName)=UPPER('phmy') )
 ;
 INSERT INTO CustomCorrespFilters(hCustomCorrespMerging,iMaxWidth,bInactive,bShowInTitle,sFieldName,sLabel,sSequence,sType,sMandatory,sListValues,sIsQuery,sLookupName,sPopulatedInURL, sMultiple,sParent,sCodeToID,sRowNumber,sColumnView)
-SELECT (SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut')),0,0,0,'phmy','Property','01','Lookup List','False','','False','ysiPropertyOrListLookup','','True','','','01','1'
+SELECT (SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut')),0,0,0,'phmy','Property','01','Lookup List','False','','False','ysiPropertyOrListLookup','Allow Edit','True','','','01','1'
 WHERE NOT EXISTS( 
                  SELECT 1 
                  FROM CustomCorrespFilters 
@@ -140,7 +142,7 @@ WHERE NOT EXISTS(SELECT 1
 /* Insert or UPDATE Report Sections for rpt */ 
 UPDATE CustomCorrespSections 
 SET hCustomCorrespSetup =(SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode) = UPPER('rpt') AND hCustomCorrespMerging=(SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut'))),bMultiRow=1,bPrimary=1,
-    hCustomCorrespStANDardList=(SELECT hmy FROM CustomCorrespStANDardList WHERE UPPER(sName) =UPPER('')),bInactive=0,sCode='display',sName='Main',sDataSource='',sKeyCols='Property_Code',sGroupingCols='',sSummaryCols='',sOrderbyCols='',sSubTotalCols=''
+    hCustomCorrespStANDardList=(SELECT hmy FROM CustomCorrespStANDardList WHERE UPPER(sName) =UPPER('')),bInactive=0,sCode='display',sName='Main',sDataSource='display',sKeyCols='Property_Code',sGroupingCols='',sSummaryCols='',sOrderbyCols='',sSubTotalCols=''
 WHERE hMy=(SELECT ISNULL(Max(crsc1.hMy),0) 
  FROM CustomCorrespSetup crst1 
  INNER JOIN CustomCorrespSections crsc1 ON crsc1.hCustomCorrespSetup=crst1.HMY 
@@ -149,7 +151,7 @@ WHERE hMy=(SELECT ISNULL(Max(crsc1.hMy),0)
  AND crst1.hCustomCorrespMerging=(SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut'))) 
 ;
 INSERT INTO CustomCorrespSections(hCustomCorrespSetup,bMultiRow,bPrimary,bInactive,sCode,sName,sDataSource,sKeyCols,sGroupingCols,sSummaryCols,sSubTotalCols,hCustomCorrespStANDardList,sOrderbyCols)
-SELECT (SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode) = UPPER('rpt') AND hCustomCorrespMerging=(SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut'))),1,1,0,'display','Main','','Property_Code','','','',
+SELECT (SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode) = UPPER('rpt') AND hCustomCorrespMerging=(SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut'))),1,1,0,'display','Main','display','Property_Code','','','',
      (SELECT hmy FROM CustomCorrespStANDardList WHERE UPPER(sName) =UPPER('')),''
 WHERE NOT EXISTS( 
          SELECT 1 
@@ -157,6 +159,50 @@ WHERE NOT EXISTS(
          WHERE UPPER(Scode)=UPPER('display')
          AND hCustomCorrespSetup = (SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode)=UPPER('rpt')
          AND hCustomCorrespMerging=(SELECT Hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut'))))
+;
+/* Insert or UPDATE Filter Mappings for rpt */ 
+UPDATE CustomCorrespFilterMapping 
+SET hCustomCorrespMerging =(SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut')),
+    hCustomCorrespSetup =(SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode)=UPPER('rpt') AND hCustomCorrespMerging = (SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut'))),
+    hCustomCorrespFilters=(SELECT hmy FROM CustomCorrespFilters WHERE UPPER(sFieldName)=UPPER('phmy') AND hCustomCorrespMerging =(SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut'))),
+    sFilterName='p.hmy in (#phmy#)',
+    hCustomCorrespSections=0,
+    sConstantFilterValue ='',
+    sFilterpart =''
+WHERE hMy=(SELECT ISNULL(Max(crfm.hMy),0) 
+          FROM CustomCorrespMerging crm 
+          INNER JOIN CustomCorrespFilterMapping crfm On crfm.hCustomCorrespMerging=crm.hMy 
+          INNER JOIN CustomCorrespSetup crs On crs.hMy=crfm.hCustomCorrespSetup 
+          LEFT Outer JOIN CustomCorrespFilters crf On crf.hMY=crfm.hCustomCorrespFilters 
+          LEFT Outer JOIN CustomCorrespSections crfs on crfs.hmy = crfm.hCustomCorrespSections 
+          WHERE 1=1 
+          AND UPPER(crm.sCode)=UPPER('PSC_MoveOut')
+	         AND UPPER(crs.sCode)=UPPER('rpt')
+          AND ISNULL(crfm.hCustomCorrespSections,0)=0 
+          AND UPPER(crf.sFieldName)=UPPER('phmy')
+          AND ISNULL(crfm.hCustomCorrespFilters,0)<> 0 
+)
+;
+INSERT INTO CustomCorrespFilterMapping(hCustomCorrespSetup,hCustomCorrespMerging,hCustomCorrespFilters,sFilterName,hCustomCorrespSections,sConstantFilterValue,sFilterpart)
+SELECT 
+         (SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode)=UPPER('rpt') AND hCustomCorrespMerging = (SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut'))),
+         (SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode)=UPPER('PSC_MoveOut')),
+         (SELECT hmy FROM CustomCorrespFilters WHERE UPPER(sFieldName)=UPPER('phmy') AND CustomCorrespFilters.hCustomCorrespMerging=(SELECT hmy	FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut'))),'p.hmy in (#phmy#)',
+         (SELECT hmy FROM CustomCorrespSections WHERE UPPER(sCode)=UPPER('') AND hCustomCorrespSetup =(SELECT hmy FROM CustomCorrespSetup WHERE UPPER(Scode)=UPPER('rpt') AND hCustomCorrespMerging = (SELECT hmy FROM CustomCorrespMerging WHERE UPPER(Scode) = UPPER('PSC_MoveOut')))),
+         ''
+        , '' 
+WHERE NOT EXISTS( SELECT 1 
+         FROM CustomCorrespMerging crm 
+         INNER JOIN CustomCorrespFilterMapping crfm On crfm.hCustomCorrespMerging=crm.hMy 
+         INNER JOIN CustomCorrespSetup crs On crs.hMy=crfm.hCustomCorrespSetup 
+         LEFT Outer JOIN CustomCorrespFilters crf On crf.hMy = crfm.hCustomCorrespFilters 
+         LEFT Outer JOIN CustomCorrespSections crsc On crsc.hMy = crfm.hCustomCorrespSections 
+         WHERE UPPER(crm.sCode)=UPPER('PSC_MoveOut')
+	       AND UPPER(crs.sCode)=UPPER('rpt')
+	       AND ISNULL(crfm.hCustomCorrespSections,0)=0 
+          AND UPPER(crf.sFieldName)=UPPER('phmy')
+	       AND ISNULL(crfm.hCustomCorrespFilters,0)<> 0 
+)
 ;
  /* Delete existing sharepoint setup for PSC_MoveOut */
  DELETE FROM ParamOpt2 WHERE sType = 'SPPUBLISHING_PSC_MoveOut_SOURCE' 
